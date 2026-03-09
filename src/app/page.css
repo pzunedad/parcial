@@ -1,0 +1,30 @@
+h1, h2, h3 {
+    text-align: center;
+}
+
+.buscador{
+    display: flex;
+    gap:8px;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    background: white;
+    border-radius: 8px;
+}
+
+.buscador input {
+    padding: 8px 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    width: 250px;
+}
+
+.buscador button {
+    padding: 8px 16px;
+    background: blue;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+}

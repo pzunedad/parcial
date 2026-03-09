@@ -1,66 +1,101 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client'
+import { useEffect, useState } from 'react';
+import { getCocktails, getCocktailByName, getRandomCocktail } from '@/lib/api/cocktail';
+import { Cocktail as CocktailType } from '@/types/cocktail';
+import Cocktail from '@/components/Cocktail';
+import { useRouter } from 'next/navigation';
+import "./page.css";
 
-export default function Home() {
+const Home = () => {
+  const [cocktails, setCocktails] = useState<CocktailType[] | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const router = useRouter();
+
+  const fetchInitialCocktails = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const data = await getCocktails();
+      setCocktails(data || []);
+    } catch {
+      setError('Error al cargar los cocktails');
+      setCocktails([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchInitialCocktails();
+  }, []);
+
+  const handleSearch = async () => {
+    if (!searchTerm.trim()) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const data = await getCocktailByName(searchTerm);
+      setCocktails(data || []);
+    } catch {
+      setError('Error al buscar');
+      setCocktails([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+const handleAleatorio = () => {
+  setLoading(true);
+  setError(null);
+  getRandomCocktail()
+    .then((res) => {
+      if (res.data.drinks) {
+        const cocktail: CocktailType = res.data.drinks[0];
+        router.push(`/cocktail/${cocktail.idDrink}`);
+      } else {
+        setError("No se encontró ningún cocktail");
+      }
+    })
+    .catch((e) => {
+      setError(`Error: ${e.message ? e.message : e}`);
+    });
+};
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div>
+      <h1>Buscador de cocktails</h1>
+      <div className="buscador">
+        <input
+          type="text"
+          placeholder="Buscar cocktail por nombre"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+        <button onClick={handleSearch} disabled={loading}>
+          Buscar
+        </button>
+        <button onClick={handleAleatorio}>
+          Dime algo bonito
+        </button>
+      </div>
+
+      {loading && <h2>Loading...</h2>}
+      {error && <h3>Error...{error}</h3>}
+      {!loading && !error && (!cocktails || cocktails.length === 0) && (
+        <p>No se encontraron cocktails</p>
+      )}
+
+      {!loading && !error && cocktails && cocktails.length > 0 && (
+        <Cocktail cocktails={cocktails} />
+      )}
     </div>
   );
-}
+};
+
+export default Home;

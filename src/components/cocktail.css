@@ -1,0 +1,49 @@
+.cocktail-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 30px;
+  padding: 0;
+}
+
+.cocktail-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 220px;
+  padding: 15px;
+  border-radius: 12px;
+  background-color: #f4f4f4;
+}
+
+.cocktail-card:hover {
+    color: blue;
+}
+
+.cocktail-img {
+  width: 100%;
+  height: 180px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.cocktail-content {
+  padding: 15px;
+  text-align: center;
+}
+
+.cocktail-content h3 {
+  margin-bottom: 12px;
+  font-size: 18px;
+}
+
+.cocktail-button {
+  display: inline-block;
+  padding: 8px 14px;
+  background-color: #ff6b6b;
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+}
