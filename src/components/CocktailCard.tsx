@@ -1,6 +1,7 @@
 import { Cocktail } from "@/types/cocktail";
 import { useRouter } from "next/navigation";
 import "./cocktailcard.css";
+import { useLista } from "@/context/listaContext";
 
 
 type CocktailCardProps = {
@@ -10,6 +11,8 @@ type CocktailCardProps = {
 const CocktailCard = ({ cocktail }: CocktailCardProps) => {
 
   const router = useRouter();
+
+  const { addToList } = useLista();
 
   return (
     <div className="mainContainer">
@@ -89,7 +92,13 @@ const CocktailCard = ({ cocktail }: CocktailCardProps) => {
       </div>
       <div className="boton">
         <button onClick={() => router.back()}>Volver</button>
-      </div>  
+      </div>
+      <button onClick={() => {
+                if (cocktail) {
+                  addToList(cocktail.strDrink);
+                }
+              }}>Añadir a favoritos
+            </button>
     </div>
   );
 };
